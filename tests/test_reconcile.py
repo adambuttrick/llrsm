@@ -11,7 +11,6 @@ from ror_matcher.reconcile import run as run_reconcile
 
 @pytest.fixture
 def reconcile_setup_csv(tmp_path):
-    # Input CSV
     data_dir = tmp_path / "data"
     data_dir.mkdir()
     csv_file = data_dir / "records.csv"
@@ -21,11 +20,9 @@ def reconcile_setup_csv(tmp_path):
         writer.writerow(["10.1234/abc", "University of Oxford", "Dept of Physics"])
         writer.writerow(["10.5678/def", "MIT", "Dept of Chemistry"])
 
-    # Working dir
     working = tmp_path / ".ror_matcher"
     working.mkdir()
 
-    # Provenance
     provenance = [
         {"record_id": "10.1234/abc", "field": "institution", "affiliation": "University of Oxford",
          "affiliation_hash": hash_affiliation("University of Oxford"), "row_index": 0},

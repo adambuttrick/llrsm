@@ -76,3 +76,42 @@ def optimize_cmd(config):
 
 
 optimize_cmd.name = "optimize"
+
+
+@main.command()
+@click.option("--config", required=True, type=click.Path(exists=True), help="Path to YAML config file")
+@click.option("--optimize", is_flag=True, default=False, help="Run throughput optimization before querying")
+@click.option("--resume", is_flag=True, default=False, help="Resume query from checkpoint")
+def run_cmd(config, optimize, resume):
+    """Run the full pipeline: extract -> query -> reconcile."""
+    cfg = load_config(config)
+
+    click.echo("Stage 1: Extracting affiliations...")
+    extract.run(cfg)
+    click.echo("Extraction complete.")
+
+    if optimize:
+        click.echo("Optimizing concurrency...")
+
+        async def _optimize():
+            return await throughput.find_optimal_concurrency(
+                cfg.query.base_url,
+                timeout=cfg.query.timeout,
+            )
+
+        optimal = asyncio.run(_optimize())
+        cfg.query.concurrency = optimal
+        click.echo(f"Concurrency set to {optimal}.")
+
+    click.echo("Stage 2: Querying ROR API...")
+    asyncio.run(query.run(cfg, resume=resume))
+    click.echo("Query complete.")
+
+    click.echo("Stage 3: Reconciling matches...")
+    reconcile.run(cfg)
+    click.echo("Reconciliation complete.")
+
+    click.echo("Pipeline finished.")
+
+
+run_cmd.name = "run"
