@@ -15,17 +15,22 @@ pip install -e .
 All commands take a `--config` flag pointing to a YAML config file.
 
 ```bash
-# 1. Extract unique affiliations from input data
-ror-matcher extract --config config.yaml
+# Run the full pipeline (extract -> query -> reconcile)
+ror-matcher run --config config.yaml
 
-# 2. Query local ROR API (resumable with --resume)
+# With automatic concurrency optimization
+ror-matcher run --config config.yaml --optimize
+
+# Resume a previously interrupted run
+ror-matcher run --config config.yaml --resume
+
+# Or run individual stages:
+ror-matcher extract --config config.yaml
 ror-matcher query --config config.yaml
 ror-matcher query --config config.yaml --resume
-
-# 3. Reconcile matches back to source records
 ror-matcher reconcile --config config.yaml
 
-# Optional: find optimal concurrency for your local instance
+# Find optimal concurrency for your local instance
 ror-matcher optimize --config config.yaml
 ```
 
