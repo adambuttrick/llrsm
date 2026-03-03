@@ -1,4 +1,4 @@
-# Local Large-Scale ROR Matching (LLRSM)
+# Local Large-Scale ROR Matching (LLSRM)
 
 Batch reconciliation of affiliation strings against a local [ROR API](https://github.com/ror-community/ror-api) instance. Extracts affiliations from CSV/JSON/JSONL files, queries them concurrently, and writes enriched output with matched ROR IDs.
 
